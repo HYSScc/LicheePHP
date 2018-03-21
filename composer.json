@@ -6,6 +6,7 @@
       "email": "recolor@codewea.com"
     }
   ],
+  "minimum-stability": "dev",
   "require": {
     "php": ">=7.0",
     "imagine/imagine": "~0.6",
