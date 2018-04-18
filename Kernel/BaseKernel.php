@@ -11,6 +11,9 @@ use Lichee\Kernel\Kernel;
 class BaseKernel extends Kernel
 {
 
+	/**
+	 * @return \Generator
+	 */
 	public function registerBundles()
 	{
 		$bundles = require $this->getConfigDir() . '/bundles.php';
