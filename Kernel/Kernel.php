@@ -50,12 +50,12 @@ abstract class Kernel implements KernelInterface
     /**
      * @return array
      */
-    abstract public function getCoreComponent(): array;
+    abstract public function registerServiceProviders(): array;
 
     /**
      * @return array
      */
-    abstract public function getBundleClasses(): array;
+    abstract public function registerBundles();
 
     /**
      * Kernel constructor.
@@ -71,7 +71,7 @@ abstract class Kernel implements KernelInterface
         $this->setContainer($container);
         $this->initTimezone();
         $this->initComponent();
-        $this->registerBundles();
+        $this->initBundles();
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class Kernel implements KernelInterface
 
     protected function initComponent()
     {
-        $components = $this->getCoreComponent();
+        $components = $this->registerServiceProviders();
         foreach ($components as $id => $component) {
             $this->container[$id] = $component;
         }
@@ -106,9 +106,6 @@ abstract class Kernel implements KernelInterface
      */
     public function handle(Request $request)
     {
-        if (!$this->booted) {
-            throw new RuntimeException('Kernel Not Boostrap');
-        }
         $this->bootBundles();
         /**
          * @var $httpHandler HttpHandle
@@ -123,18 +120,14 @@ abstract class Kernel implements KernelInterface
         date_default_timezone_set($this->getTimeZone());
     }
 
-    protected function registerBundles()
+    protected function initBundles()
     {
-        foreach ($this->getBundleClasses() as $bundleClass) {
-            /**
-             * @var $bundle BundleInterface
-             */
-            $bundle = new $bundleClass;
+        foreach ($this->registerBundles() as $bundle) {
+            /*** @var $bundle BundleInterface */
             $bundle->setContainer($this->getContainer());
             $bundle->register();
             $this->bundles[$bundle->getName()] = $bundle;
         }
-        $this->booted=true;
     }
 
     protected function bootBundles()
@@ -142,6 +135,7 @@ abstract class Kernel implements KernelInterface
         foreach ($this->getBundles() as $bundleInstance) {
             $bundleInstance->boot();
         }
+        $this->booted = true;
     }
 
     /**
@@ -210,7 +204,7 @@ abstract class Kernel implements KernelInterface
      */
     public function getConfigDir(): string
     {
-        return $this->getRootDir() . '/config';
+        return $this->getRootDir() . '/Config';
     }
 
     /**

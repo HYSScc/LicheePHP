@@ -19,6 +19,9 @@
     "symfony/var-dumper": "~2.8",
     "symfony/dotenv": "^3.4"
   },
+  "files": [
+    "functions.php"
+  ],
   "autoload": {
     "psr-4": {
       "Lichee\\": ""

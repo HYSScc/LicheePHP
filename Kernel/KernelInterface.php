@@ -12,6 +12,12 @@ interface KernelInterface
      * register bundles;
      * @return array
      */
+    public function registerBundles();
+
+    /**
+     * get bundles;
+     * @return array
+     */
     public function getBundles(): array;
 
     /**
