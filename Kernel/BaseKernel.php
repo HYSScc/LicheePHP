@@ -1,8 +1,6 @@
 <?php
 
-namespace Lichee\Kernel\BaseKernel;
-
-use Lichee\Kernel\Kernel;
+namespace Lichee\Kernel;
 
 /**
  * Class BaseKernel

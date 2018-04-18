@@ -30,10 +30,10 @@ class FileLogHandler implements LogHandlerInterface
         return [];
     }
 
-    /**
-     * @param $args
-     * @return LogBag|__anonymous@645
-     */
+	/**
+	 * @param $args
+	 * @return LogBag|__anonymous@685
+	 */
     public function createLogBag($args)
     {
         return (new class(...func_get_args()) extends LogBag
