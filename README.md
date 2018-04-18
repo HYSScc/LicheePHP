@@ -1,2 +1,1 @@
-# LicheePHP
 LicheePHP of framework
