@@ -27,7 +27,7 @@ class BaseKernel extends Kernel
 	public function registerServiceProviders(): array
 	{
 		/**
-		 * @var $serviceProvidersClosure Closure
+		 * @var $serviceProvidersClosure \Closure
 		 */
 		$serviceProvidersClosure = require $this->getConfigDir() . '/ServiceProviders.php';
 		$serviceProvidersClosure->bindTo($this);
