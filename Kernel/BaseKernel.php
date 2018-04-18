@@ -1,9 +1,12 @@
 <?php
 
+namespace Lichee\Kernel\BaseKernel;
+
 use Lichee\Kernel\Kernel;
 
 /**
  * Class BaseKernel
+ * @package Lichee\Kernel\BaseKernel
  */
 class BaseKernel extends Kernel
 {
