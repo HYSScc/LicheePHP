@@ -29,5 +29,5 @@ interface TemplateBlockInterface
      * @param $default
      * @return mixed
      */
-    public function block($blockId, $default='');
+    public function block($blockId, $default = '');
 }

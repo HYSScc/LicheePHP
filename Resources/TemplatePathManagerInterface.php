@@ -10,8 +10,8 @@ namespace Lichee\Resources;
 interface TemplatePathManagerInterface
 {
     /**
-     * @param $view
+     * @param $template
      * @return mixed
      */
-    public function getTemplateRealPath($view);
+    public function getTemplateRealPath($template);
 }

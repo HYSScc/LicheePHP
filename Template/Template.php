@@ -10,12 +10,13 @@ use Lichee\Template\Block\Block;
 use Lichee\Template\Exception\TemplateException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Lichee\Template\Block\TemplateBlockInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class Template
  * @package Lichee\Template
  */
-class Template implements TemplateBlockInterface, TemplateInterface, ArrayAccess
+class Template implements TemplateInterface, TemplateBlockInterface, ArrayAccess
 {
     /**
      * @var BundleTemplatePathManager
@@ -47,13 +48,13 @@ class Template implements TemplateBlockInterface, TemplateInterface, ArrayAccess
     }
 
     /**
-     * @param $view
+     * @param string $template
      * @param array $parameters
      * @return string
      */
-    public function render($view, $parameters = array())
+    public function render($template, $parameters = array()): string
     {
-        $subTemplate = $this->getViewContent($view, $parameters);
+        $subTemplate = $this->getTemplateContent($template, $parameters);
         if (empty($this->extendStack)) {
             return $subTemplate;
         }
@@ -71,55 +72,53 @@ class Template implements TemplateBlockInterface, TemplateInterface, ArrayAccess
     }
 
     /**
-     * @param $key
-     * @param $value
+     * 模板是否存在
+     * @param $template
+     * @return bool
      */
-    public function set($key, $value)
+    public function hasTemplate($template): bool
     {
-        $this[$key] = $value;
-    }
-
-    public function get($key)
-    {
-        return $this[$key];
+        return file_exists($this->fileManager->getTemplateRealPath($template));
     }
 
     /**
-     * @param $view
+     * 获取模板内容
+     * @param $template
      * @param $parameters
      * @return mixed
      */
-    public function getViewContent($view, $parameters)
+    public function getTemplateContent($template, $parameters): string
     {
-        $file = $this->getRealPath($view);
-        $content = $this->getRenderContent($file, $parameters);
+        $templatePath = $this->getTemplateRealPath($template);
+        if (!$this->hasTemplate($template)) {
+            throw new NotFoundHttpException($templatePath);
+        }
+        $content = $this->getRenderContent($templatePath, $parameters);
         return $content;
     }
 
     /**
-     * @param $view
-     * @return string
+     * 获取模板绝对路径
+     * @param $template
+     * @return mixed
      */
-    public function getRealPath($view)
+    protected function getTemplateRealPath($template): string
     {
-        $realFile = $this->fileManager->getTemplateRealPath($view);
-        if (!file_exists($realFile)) {
-            throw new FileNotFoundException($realFile);
-        }
-        return $realFile;
+        return $this->fileManager->getTemplateRealPath($template);
     }
 
     /**
      * 继承模板
      *
      * 这里继承模板后layout不会立即执行 @see render()
-     * @param $view
+     * @param string $template
      * @param array $parameters
+     * @return null
      */
-    public function extend($view, $parameters = array())
+    public function extend($template, $parameters = array())
     {
-        $this->extendStack[$view] = function () use ($view, $parameters) {
-            return $this->getViewContent($view, $parameters);
+        $this->extendStack[$template] = function () use ($template, $parameters) {
+            return $this->getTemplateContent($template, $parameters);
         };
     }
 
@@ -229,10 +228,10 @@ class Template implements TemplateBlockInterface, TemplateInterface, ArrayAccess
         };
         ob_start();
         ob_implicit_flush(false);
-        extract($parameters,EXTR_OVERWRITE);
+        extract($parameters, EXTR_OVERWRITE);
         try {
-			require($file);
-			return ob_get_clean();
+            require($file);
+            return ob_get_clean();
         } catch (\Exception $e) {
             $clearObLevel($obInitialLevel);
             throw $e;
@@ -249,7 +248,7 @@ class Template implements TemplateBlockInterface, TemplateInterface, ArrayAccess
      */
     public function renderWidget($file, array $parameters = [])
     {
-        return $this->getViewContent($file, $parameters);
+        return $this->getTemplateContent($file, $parameters);
     }
 
 

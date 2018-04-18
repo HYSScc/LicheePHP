@@ -13,20 +13,36 @@ class BundleTemplatePathManager implements TemplatePathManagerInterface
 {
     const ALIAS_DELIMITER = "@";
 
+    /**
+     * @var KernelInterface
+     */
     protected $kernel;
 
-    protected $viewsPath;
+    /**
+     * 基础路径
+     * @var string
+     */
+    protected $basePath;
 
-    public function __construct(KernelInterface $kernel, $viewsPath)
+    public function __construct(KernelInterface $kernel, $basePath)
     {
         $this->kernel = $kernel;
-        $this->viewsPath = trim($viewsPath, '/');
+        $this->basePath = trim($basePath, '/');
     }
 
-    public function getTemplateRealPath($view)
+    /**
+     * 获取真实路径
+     * @param $template
+     * @return mixed
+     */
+    public function getTemplateRealPath($template)
     {
-        $bundleReplaceMap = $this->getAliasReplaceMap();
-        return str_replace(array_keys($bundleReplaceMap), $bundleReplaceMap, $view);
+        $bundleReplaceReplaceMap = $this->getAliasReplaceMap();
+        return str_replace(
+            array_keys($bundleReplaceReplaceMap),
+            $bundleReplaceReplaceMap,
+            $template
+        );
     }
 
     /**
@@ -42,7 +58,7 @@ class BundleTemplatePathManager implements TemplatePathManagerInterface
          * @var $bundle BundleInterface
          */
         foreach ($this->kernel->getBundles() as $bundleKey => $bundle) {
-            $bundleReplaceMap[self::ALIAS_DELIMITER . $bundleKey] = $bundle->getPath() . "/" . $this->viewsPath;
+            $bundleReplaceMap[self::ALIAS_DELIMITER . $bundleKey] = $bundle->getPath() . "/" . $this->basePath;
         }
         return $bundleReplaceMap;
     }

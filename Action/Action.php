@@ -118,38 +118,33 @@ class Action
     /**
      * 返回一个渲染后的视图
      *
-     * @param string $view The view name
+     * @param string $template The template name
      * @param array $parameters An array of parameters to pass to the view
      *
      * @return string The rendered view
      */
-    public function renderView($view, array $parameters = array())
+    public function renderTemplate($template, array $parameters = array())
     {
-        if ($this->container->has('template')) {
-            return $this->container->get('template')->render($view, $parameters);
-        }
+        return $this->getTemplate()
+            ->render($template, $parameters);
     }
 
     /**
-     * example:
-     *  '@AppBundle/User/User.php'
-     * @param string $view The view name
+     * @param string $template The view name
      * @param array $parameters An array of parameters to pass to the view
      * @param Response $response A response instance
      *
      * @return Response A Response instance
      */
-    public function render($view, array $parameters = array(), Response $response = null): Response
+    public function render($template, array $parameters = array(), Response $response = null): Response
     {
         if (null === $response) {
             $response = new Response();
         }
-        /**
-         * @var $template TemplateInterface
-         */
-        $template = $this->getTemplate();
-        $response->setContent($template->render($view, $parameters));
-        return $response;
+        return $response->setContent(
+            $this->getTemplate()
+                ->render($template, $parameters)
+        );
     }
 
     /**
