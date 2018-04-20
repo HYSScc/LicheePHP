@@ -56,6 +56,6 @@ class BaseKernel extends Kernel
 	 */
 	public function getConfigDir(): string
 	{
-		return $this->getRootDir() . '/Config';
+		return $this->getRootDir() . '/config';
 	}
 }
